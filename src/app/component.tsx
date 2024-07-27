@@ -1,85 +1,39 @@
-import * as ReactDOM from 'react-dom/client';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
 import {
-    FloatingWindow,
     PluginApi,
     BbbPluginSdk,
-    NavBarButton,
-    NavBarItemPosition,
 } from 'bigbluebutton-html-plugin-sdk';
 import { SampleFloatingWindowPluginProps } from './types';
-import StickyNote from '../float/component';
-import enums from '../utils/events';
-import { getWindowDimensions } from '../utils/window';
+import { getSidebar } from './sidebar';
+import { getNavBarItems } from './navbar';
 
 function SampleFloatingWindowPlugin(
     { pluginUuid: uuid }: SampleFloatingWindowPluginProps,
 ): React.ReactElement {
     const pluginApi: PluginApi = BbbPluginSdk.getPluginApi(uuid);
-    const [isClosed, setIsClosed] = useState(false);
+    const [isPaused, setIsPaused] = useState(false);
+    const [time, setTime] = useState(0)
 
-    const handleCloseWindow: EventListener = (
-        () => {
-            setIsClosed(true);
-        }) as EventListener;
-
-
-    const [wd, setWindowDimensions] = useState(getWindowDimensions());
+    const userListOpened = pluginApi
+        .useUiData(UserListUiDataNames.USER_LIST_IS_OPEN, { value: true });
 
     useEffect(() => {
-        function handleResize() {
-            setWindowDimensions(getWindowDimensions());
-        }
+        const navBaritems = getNavBarItems(time, isPaused, () => {
+            setIsPaused(!isPaused)
+        }, () => { alert("ended") })
+        pluginApi.setNavBarItems(navBaritems);
 
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
+        const interval = setInterval(() => { setTime(time + 1) }, 1000)
+        return () => { clearInterval(interval) }
+    }, [isPaused, time])
 
-    useEffect(() => {
-        const restoringButton: NavBarButton = new NavBarButton({
-            label: "Действия c уроком",
-            icon: 'person',
-            tooltip: 'Open private notes floating window',
-            disabled: false,
-            onClick: () => {
-                setIsClosed(false);
-            },
-            position: NavBarItemPosition.RIGHT,
-            hasSeparator: true,
-        });
-
-        pluginApi.setNavBarItems([restoringButton]);
-        if (!isClosed) {
-            const floatingWindow = new FloatingWindow({
-                top: wd.height / 2 - (192 / 2),
-                left: wd.width / 2 - (336 / 2),
-
-                movable: false,
-                backgroundColor: '#f1f1f1',
-                boxShadow: '2px 2px 10px #777',
-                contentFunction: (element: HTMLElement) => {
-                    const root = ReactDOM.createRoot(element);
-                    root.render(
-                        <React.StrictMode>
-                            <StickyNote />
-                        </React.StrictMode>,
-                    );
-                },
-            });
-            pluginApi.setFloatingWindows([floatingWindow]);
-        } else {
-            pluginApi.setFloatingWindows([]);
-        }
-    }, [isClosed, wd]);
 
     useEffect(() => {
-        window.addEventListener(enums.SampleFloatingWindow.CLOSE_WINDOW, handleCloseWindow);
-        return () => {
-            window.removeEventListener(enums.SampleFloatingWindow.CLOSE_WINDOW, handleCloseWindow);
-        };
-    }, []);
+        const sidebar = getSidebar()
+        pluginApi.setGenericContentItems([sidebar])
+    }, [])
 
     return null;
 }

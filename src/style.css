@@ -4,3 +4,43 @@
 @tailwind components;
 
 @tailwind utilities;
+
+.icon-bbb-test{
+    content: '';
+    background:url('https://supply.bbb.fiveplas.ru:3000/book.png');
+    background-size:cover;
+    width: 1em;
+    height: 1.3em;
+    text-align: center;
+}
+
+
+.icon-bbb-green-pause{
+    content: '';
+    background:url('https://supply.bbb.fiveplas.ru:3000/video-pause-button-green.png');
+    background-size:cover;
+    width: 1.5em;
+    height: 1.5em;
+    margin-right: 0.3em;
+    text-align: center;
+}
+
+.icon-bbb-yellow-pause{
+    content: '';
+    background:url('https://supply.bbb.fiveplas.ru:3000/play-button-yellow.png');
+    background-size:cover;
+    width: 1.5em;
+    height: 1.5em;
+    text-align: center;
+    margin-right: 0.3em;
+}
+
+.icon-bbb-end-cust{
+    content: '';
+    background:url('https://supply.bbb.fiveplas.ru:3000/circle.png');
+    background-size:cover;
+    width: 1.5em;
+    height: 1.5em;
+    text-align: center;
+    margin-right: 0.3em;
+}

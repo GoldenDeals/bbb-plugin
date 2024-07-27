@@ -545,104 +545,123 @@ video {
   --tw-contain-style:  ;
 }
 
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.my-8 {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
 .mb-2 {
   margin-bottom: 0.5rem;
 }
 
-.mr-2 {
-  margin-right: 0.5rem;
+.mb-5 {
+  margin-bottom: 1.25rem;
 }
 
-.mt-3 {
-  margin-top: 0.75rem;
+.ml-2 {
+  margin-left: 0.5rem;
 }
 
-.mt-\[6px\] {
-  margin-top: 6px;
+.mt-4 {
+  margin-top: 1rem;
 }
 
 .flex {
   display: flex;
 }
 
-.h-4 {
-  height: 1rem;
+.h-6 {
+  height: 1.5rem;
 }
 
-.h-48 {
-  height: 12rem;
-}
-
-.h-7 {
-  height: 1.75rem;
+.h-\[30vh\] {
+  height: 30vh;
 }
 
 .h-full {
   height: 100%;
 }
 
-.w-4 {
-  width: 1rem;
+.w-6 {
+  width: 1.5rem;
 }
 
-.w-96 {
-  width: 24rem;
+.w-\[30vw\] {
+  width: 30vw;
+}
+
+.w-\[75\%\] {
+  width: 75%;
 }
 
 .w-full {
   width: 100%;
 }
 
-.resize {
-  resize: both;
-}
-
 .content-center {
   align-content: center;
-}
-
-.justify-end {
-  justify-content: flex-end;
-}
-
-.justify-center {
-  justify-content: center;
 }
 
 .justify-between {
   justify-content: space-between;
 }
 
-.rounded-2xl {
-  border-radius: 1rem;
+.truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.rounded-full {
-  border-radius: 9999px;
+.rounded-xl {
+  border-radius: 0.75rem;
+}
+
+.border-0 {
+  border-width: 0px;
 }
 
 .border-b-2 {
   border-bottom-width: 2px;
 }
 
-.border-b-zinc-400 {
+.border-b-black {
   --tw-border-opacity: 1;
-  border-bottom-color: rgb(161 161 170 / var(--tw-border-opacity));
+  border-bottom-color: rgb(0 0 0 / var(--tw-border-opacity));
 }
 
-.bg-green-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(187 247 208 / var(--tw-bg-opacity));
+.border-b-zinc-200 {
+  --tw-border-opacity: 1;
+  border-bottom-color: rgb(228 228 231 / var(--tw-border-opacity));
 }
 
-.bg-red-800 {
+.bg-gray-200 {
   --tw-bg-opacity: 1;
-  background-color: rgb(153 27 27 / var(--tw-bg-opacity));
+  background-color: rgb(229 231 235 / var(--tw-bg-opacity));
 }
 
-.bg-yellow-200 {
+.bg-green-400 {
   --tw-bg-opacity: 1;
-  background-color: rgb(254 240 138 / var(--tw-bg-opacity));
+  background-color: rgb(74 222 128 / var(--tw-bg-opacity));
+}
+
+.bg-white {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
+}
+
+.bg-yellow-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(250 204 21 / var(--tw-bg-opacity));
 }
 
 .bg-zinc-100 {
@@ -650,28 +669,79 @@ video {
   background-color: rgb(244 244 245 / var(--tw-bg-opacity));
 }
 
-.pb-3 {
-  padding-bottom: 0.75rem;
+.px-2 {
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
 }
 
-.pl-4 {
-  padding-left: 1rem;
+.pl-3 {
+  padding-left: 0.75rem;
 }
 
-.pr-4 {
-  padding-right: 1rem;
+.pr-3 {
+  padding-right: 0.75rem;
 }
 
-.pt-3 {
-  padding-top: 0.75rem;
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
-.text-base {
-  font-size: 1rem;
-  line-height: 1.5rem;
+.font-bold {
+  font-weight: 700;
 }
 
-.hover\:bg-red-600:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(220 38 38 / var(--tw-bg-opacity));
+.text-black {
+  --tw-text-opacity: 1;
+  color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.icon-bbb-test{
+  content: '';
+  background:url('https://supply.bbb.fiveplas.ru:3000/book.png');
+  background-size:cover;
+  width: 1em;
+  height: 1.3em;
+  text-align: center;
+}
+
+.icon-bbb-green-pause{
+  content: '';
+  background:url('https://supply.bbb.fiveplas.ru:3000/video-pause-button-green.png');
+  background-size:cover;
+  width: 1.5em;
+  height: 1.5em;
+  margin-right: 0.3em;
+  text-align: center;
+}
+
+.icon-bbb-yellow-pause{
+  content: '';
+  background:url('https://supply.bbb.fiveplas.ru:3000/play-button-yellow.png');
+  background-size:cover;
+  width: 1.5em;
+  height: 1.5em;
+  text-align: center;
+  margin-right: 0.3em;
+}
+
+.icon-bbb-end-cust{
+  content: '';
+  background:url('https://supply.bbb.fiveplas.ru:3000/circle.png');
+  background-size:cover;
+  width: 1.5em;
+  height: 1.5em;
+  text-align: center;
+  margin-right: 0.3em;
+}
+
+.hover\:text-clip:hover {
+  text-overflow: clip;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dark\:bg-gray-700 {
+    --tw-bg-opacity: 1;
+    background-color: rgb(55 65 81 / var(--tw-bg-opacity));
+  }
 }
