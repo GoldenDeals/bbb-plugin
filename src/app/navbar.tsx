@@ -1,6 +1,8 @@
-import { NavBarButton, NavBarInfo, NavBarItemPosition } from "bigbluebutton-html-plugin-sdk";
+import { NavBarButton, NavBarInfo, NavBarItemPosition, pluginLogger } from "bigbluebutton-html-plugin-sdk";
+import { CustomLesson } from "./types";
 
 export function getNavBarItems(time: number, isPaused: boolean, pauseCallback: () => void, endCallback: () => void) {
+    pluginLogger.info("Time inside nav bar: ", time)
     const restoringButton: NavBarButton = new NavBarButton({
         label: isPaused ? "Возобновить" : "Пауза",
         icon: isPaused ? 'yellow-pause' : 'green-pause',
@@ -23,7 +25,7 @@ export function getNavBarItems(time: number, isPaused: boolean, pauseCallback: (
     });
     EndButton.setItemId("dendBtn")
     const info = new NavBarInfo({
-        label: (isPaused ? 'На паузе ' : 'Идет ') + ([Math.floor(time / 60), time % 60].map(x => x < 10 ? '0' + x : x).join(":")),
+        label: (isPaused ? 'На паузе        ' : 'Идет        ') + ([Math.floor(time / 60), time % 60].map(x => x < 10 ? '0' + x : x).join(":")),
         hasSeparator: true,
         position: NavBarItemPosition.CENTER,
     });

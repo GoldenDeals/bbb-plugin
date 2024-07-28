@@ -19,6 +19,7 @@
         "react-modal": "^3.16.1",
         "react-select": "^5.7.3",
         "styled-components": "^6.1.12",
+        "swr": "^2.2.5",
         "timers": "^0.1.1"
     },
     "scripts": {

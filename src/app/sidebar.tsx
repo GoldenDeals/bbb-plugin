@@ -1,20 +1,26 @@
 import * as React from 'react';
-import { LessonI, FileI } from './types';
-import { GenericContentSidekickArea } from 'bigbluebutton-html-plugin-sdk';
+import { FileI, CustomLesson } from './types';
+import { GenericContentSidekickArea, pluginLogger } from 'bigbluebutton-html-plugin-sdk';
 
 import * as ReactDOM from 'react-dom/client';
+import useSWR from "swr"
+import { request } from "./fetcher"
 
-export function getSidebar() {
+export function getSidebar(Id: string, Token: string, paused: boolean) {
+    pluginLogger.info("Hello from constructor ", Id, Token)
     const sidebar = new GenericContentSidekickArea({
         name: 'Информация об уроке',
         section: 'Урок',
         buttonIcon: 'test',
         open: false,
-        contentFunction: (element: HTMLElement) => {
+        contentFunction: async (element: HTMLElement) => {
             const root = ReactDOM.createRoot(element);
+            pluginLogger.info("Hello from Sidebar", Id, Token)
+            const lesson = await request<CustomLesson>("bbb/lesson", Id, Token)
+
             root.render(
                 <React.StrictMode>
-                    <GenericContentSidekickExample />
+                    <GenericContentSidekickExample le={lesson} paused={paused} />
                 </React.StrictMode>,
             );
         },
@@ -24,51 +30,14 @@ export function getSidebar() {
 }
 
 
-export function GenericContentSidekickExample() {
-    const lesson: LessonI = {
-        id: "668a8cb6b497e65c3832bf49",
-        created_at: "1722065092",
-        updated_at: "1722070092",
-        name: "dfsfsdfsd",
-        subject_id: "667add073b2d436535b01cac",
-        grade_id: "66813b35ea61130a81e1fc4c",
-        type_id: "000000000000000000000000",
-        expected_time: 3600,
-        time_started: 1722071092,
-        chat_token: "ojfdklg;kler;",
-        time_ended: 0,
-        time_erased: 0,
-        paused: false,
-        last_pause: 1722071092,
-        suspend_message: "",
-        total_time: 0,
-        chat_id: "668a8ce9b497e65c3832bf4a",
-        "teacher_confirmed": true,
-        "student_confirmed": true,
-        "paused_by_end": false,
-        "planned": 1722071092 - 60,
-        "active": false,
-        "sub_token": "f0d32cca-3c12-4803-8c85-3cb51006c15e",
-        "amount": 0,
-        "teacher_amount": 0,
-        "price": 1500,
-        "percent": 60,
-        "attachment": [
-            { base64: "", fileName: "Первый файл", fileSize: "1024", fileType: "document/pdf" },
-            { base64: "", fileName: "2 файл", fileSize: "134217728", fileType: "" },
-            { base64: "", fileName: "3 файл", fileSize: "1024", fileType: "document/docx" },
-            { base64: "", fileName: "", fileSize: "1024", fileType: "text/javascript" },
-            { base64: "", fileName: "5 файл", fileSize: "1024", fileType: "" },
-            { base64: "", fileName: "8938443324u58342urph2ife;wlvdbs;k/nvwed;sbjdsknc/swdsjcb файл", fileSize: "1024", fileType: "" },
-        ],
-    }
-
+export function GenericContentSidekickExample({ le, paused }: { le: CustomLesson, paused: boolean }) {
     const getStatus = (paused: boolean) => {
         if (paused) {
             <span className='mb-2 ml-2 pl-3 pr-3 rounded-xl bg-yellow-400'> На паузе </span>
         }
         return <span className='mb-2 ml-2 pl-3 pr-3 rounded-xl bg-green-400'> В процессе </span>
     }
+
     const getFile = (file: FileI) => {
         let name = file.fileName;
         if (file.fileName === "") {
@@ -85,23 +54,23 @@ export function GenericContentSidekickExample() {
     const getFileTable = (files: FileI[]) => {
         return files.map(file => getFile(file))
     }
+
     return (<>
         <div className='bg-white w-full h-full border-b-5 border-b-black'>
             <div className='font-bold flex text-lg content-center justify-between mt-4 px-2 border-b-zinc-200 border-b-2'>
                 <span className='mb-2'>Урок: </span>
-                {getStatus(lesson.paused || lesson.paused_by_end)}
+                {getStatus(le.lesson.paused || le.lesson.paused_by_end || paused)}
             </div>
 
             <div className='flex text-md content-center justify-between mt-4 px-2 border-b-zinc-200 border-b-2'>
                 <span className='mb-2'>Начало: </span>
+                <span className='mb-2'> {new Date(le.lesson.time_started * 1000).toLocaleDateString("ru-RU", { weekday: "short", year: "2-digit", month: "2-digit", day: "2-digit" })} </span>
             </div>
 
             <div className='flex text-md content-center justify-between mt-4 px-2 border-b-zinc-200 border-b-2'>
                 <span className='mb-2'>Запланированно: </span>
-            </div>
 
-            <div className='flex text-md content-center justify-between my-4 px-2'>
-                <span className='mb-2'>Длительность: </span>
+                <span className='mb-2'> {new Date(le.lesson.planned * 1000).toLocaleDateString("ru-RU", { weekday: "short", year: "2-digit", month: "2-digit", day: "2-digit" })} </span>
             </div>
 
             <hr className="h- my-8 bg-gray-200 border-0 dark:bg-gray-700" />
@@ -111,10 +80,13 @@ export function GenericContentSidekickExample() {
 
             <div className='flex text-md content-center justify-between mt-4 px-2 border-b-zinc-200 border-b-2'>
                 <span className='mb-2'>Ученик: </span>
+                <span className='mb-2'> {le.child.name} </span>
             </div>
 
             <div className='flex text-md content-center mb-5 justify-between mt-4 px-2'>
                 <span className='mb-2'>Учитель: </span>
+
+                <span className='mb-2'> {le.teacher.name} </span>
             </div>
 
             <hr className="h- my-8 bg-gray-200 border-0 dark:bg-gray-700" />
@@ -123,7 +95,8 @@ export function GenericContentSidekickExample() {
                 <span className='mb-2'>Файлы</span>
             </div>
             <div className=''>
-                {getFileTable(lesson.attachment)}
+
+                {le.lesson.attachment ? getFileTable(le.lesson.attachment) : <span>Нет прикрепленных файлов </span>}
             </div>
         </div>
     </>

@@ -52,3 +52,26 @@ export interface FileI {
     fileSize: string;
     fileType: string;
 }
+
+export interface UserFakeMap {
+    id: string;
+    login: string;
+    name: string;
+    photo: string;
+    about: string;
+}
+
+export interface CustomLesson {
+    lesson: LessonI;
+    child: UserFakeMap;
+    teacher: UserFakeMap;
+}
+
+
+export function getWindowDimensions() {
+    const { innerWidth: width, innerHeight: height } = window;
+    return {
+        width,
+        height
+    };
+}

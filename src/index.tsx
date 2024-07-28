@@ -10,6 +10,7 @@ import './style.css';
 import './output.css';
 
 const root = ReactDOM.createRoot(document.getElementById(uuid));
+
 root.render(
     <React.StrictMode>
         <SampleFloatingWindowPlugin {...{
@@ -17,5 +18,5 @@ root.render(
             pluginName,
         }}
         />
-    </React.StrictMode>,
+    </React.StrictMode >
 );
