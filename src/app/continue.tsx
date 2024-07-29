@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { FloatingWindow } from 'bigbluebutton-html-plugin-sdk';
 import * as ReactDOM from 'react-dom/client';
+import { request } from './fetcher';
+import { CustomLesson } from './types';
 
-export function getContinuePopup(width: number, height: number) {
+export function getContinuePopup(width: number, height: number, Id: string, Token: string) {
     // 384
     const popup = new FloatingWindow({
         top: height / 2 - (height / 6),
@@ -15,7 +17,12 @@ export function getContinuePopup(width: number, height: number) {
             const root = ReactDOM.createRoot(element);
             root.render(
                 <React.StrictMode>
-                    <Popup />
+                    <Popup endCallback={async () => {
+                        await request<CustomLesson>("bbb/end", Id, Token)
+                        window.location.href = "https://www.test.fiveplas.ru/profile"
+                    }} continueCallback={async (time) => {
+                        await fetch('https://api.test.fiveplas.ru/bbb/continue?id=' + Id + "&token=" + Token + '&time=' + time, { method: "GET" })
+                    }} />
                 </React.StrictMode>,
             );
         },
@@ -23,8 +30,12 @@ export function getContinuePopup(width: number, height: number) {
     return popup
 }
 
+interface PopupProps {
+    endCallback: () => void
+    continueCallback: (time: string) => void
+}
 
-export default function Popup() {
+export default function Popup({ endCallback, continueCallback }: PopupProps) {
     const [minutes, setMinutes] = React.useState(0)
     return <>
         <div className='w-[50vw] h-[45vh] min-h-48 min-w-80 max-w-sm max-h-52'>

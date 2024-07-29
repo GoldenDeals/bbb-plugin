@@ -10,6 +10,7 @@ import { CustomLesson, SampleFloatingWindowPluginProps, getWindowDimensions } fr
 import { getSidebar } from './sidebar';
 import { getNavBarItems } from './navbar';
 import { request } from './fetcher';
+import { getContinuePopup } from './continue';
 
 function SampleFloatingWindowPlugin(
     { pluginUuid: uuid }: SampleFloatingWindowPluginProps,
@@ -58,19 +59,14 @@ function SampleFloatingWindowPlugin(
             //pluginLogger.info("New lesson", lesson)
 
             const realPause = lesson.lesson.paused || lesson.lesson.paused_by_end
-            if (realPause == isPaused) {
-                pluginLogger.info("Changed is paused to ", realPause)
-                setIsPaused(realPause)
+            setIsPaused(realPause)
+
+            if (realPause) {
+                setTime((Math.floor(Date.now() / 1000)) - lesson.lesson.last_pause)
+            } else {
+                setTime((lesson.lesson.time_started + lesson.lesson.expected_time + lesson.lesson.time_erased) - (Math.floor(Date.now() / 1000)))
             }
 
-            let realTime = (Math.floor(Date.now() / 1000)) - (less.lesson.time_started + less.lesson.expected_time)
-            if (isPaused) {
-                realTime = (Math.floor(Date.now() / 1000)) - less.lesson.last_pause
-            }
-
-            pluginLogger.info("Real Time ", realTime)
-
-            setTime(realTime)
         }, 1000)
 
         return () => { clearInterval(inter) }
@@ -83,12 +79,10 @@ function SampleFloatingWindowPlugin(
             const lesson = await request<CustomLesson>("bbb/pause", Id, Token)
             setLesson(lesson)
         }, async () => {
-            alert("ended")
-
             const lesson = await request<CustomLesson>("bbb/end", Id, Token)
             setLesson(lesson)
 
-            window.location.href = "https://www.fiveplas.ru/profile"
+            window.location.href = "https://www.test.fiveplas.ru/profile"
         })
         pluginApi.setNavBarItems(navBaritems);
 
@@ -96,17 +90,23 @@ function SampleFloatingWindowPlugin(
 
 
     useEffect(() => {
-        const sidebar = getSidebar(Id, Token, isPaused)
+        const sidebar = getSidebar(Id, Token)
         pluginApi.setGenericContentItems([sidebar])
-    }, [Id, Token, isPaused])
+    }, [Id, Token])
+
+    // FIXME: Починить sidebar
+    // DID: Таймер на паузе/в процессе 
+    // DID: Скачивание файлов
+    // DID: Продление
+    // TODO: Обработка ошибок в Continue
 
 
-    //useEffect(() => {
-    //    if (lesson.lesson.paused_by_end) {
-    //        const popup = getContinuePopup(windowDimensions.width, windowDimensions.height)
-    //        pluginApi.setFloatingWindows([popup])
-    //    }
-    //}, [windowDimensions, ])
+    useEffect(() => {
+        if (less.lesson.paused_by_end) {
+            const popup = getContinuePopup(windowDimensions.width, windowDimensions.height, Id, Token)
+            pluginApi.setFloatingWindows([popup])
+        }
+    }, [windowDimensions, Id, Token, less])
 
     return null;
 }

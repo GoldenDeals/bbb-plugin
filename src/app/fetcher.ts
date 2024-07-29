@@ -9,7 +9,7 @@ export function request<TResponse>(
     }
     // Inside, we call the `fetch` function with 
     // a URL and config given:
-    return fetch('https://api.fiveplas.ru/' + url + '?' + 'id=' + id + "&token=" + token, config)
+    return fetch('https://api.test.fiveplas.ru/' + url + '?' + 'id=' + id + "&token=" + token, config)
         // When got a response call a `json` method on it
         .then((response) => response.json())
         // and return the result data.

@@ -2,7 +2,6 @@ import { NavBarButton, NavBarInfo, NavBarItemPosition, pluginLogger } from "bigb
 import { CustomLesson } from "./types";
 
 export function getNavBarItems(time: number, isPaused: boolean, pauseCallback: () => void, endCallback: () => void) {
-    pluginLogger.info("Time inside nav bar: ", time)
     const restoringButton: NavBarButton = new NavBarButton({
         label: isPaused ? "Возобновить" : "Пауза",
         icon: isPaused ? 'yellow-pause' : 'green-pause',
