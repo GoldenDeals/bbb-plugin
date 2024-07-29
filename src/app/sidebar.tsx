@@ -26,16 +26,17 @@ export function getSidebar(Id: string, Token: string) {
 
 
 export function GenericContentSidekickExample({ Id, Token }: { Id: string, Token: string }) {
-    pluginLogger.info("Hello from Sidebar", Id, Token)
     const [le, setLess] = React.useState<CustomLesson | null>(null)
 
     React.useEffect(() => {
-        const inter = setInterval(async () => {
+        const inter = setTimeout(async () => {
             const lesson = await request<CustomLesson>("bbb/lesson", Id, Token)
-            pluginLogger.info("Fetched lesson from sidebar")
-            setLess(lesson)
-        }, 5000)
-        return () => { clearInterval(inter) }
+            if (lesson) {
+                pluginLogger.info("Lesson ", lesson.lesson.id)
+                setLess(lesson)
+            }
+        }, 2000)
+        return () => { clearTimeout(inter) }
     }, [Id, Token])
 
     if (!le) {
@@ -46,12 +47,6 @@ export function GenericContentSidekickExample({ Id, Token }: { Id: string, Token
         )
     }
 
-    const getStatus = (paused: boolean) => {
-        if (paused) {
-            <span className='mb-2 ml-2 pl-3 pr-3 rounded-xl bg-yellow-400'> На паузе </span>
-        }
-        return <span className='mb-2 ml-2 pl-3 pr-3 rounded-xl bg-green-400'> В процессе </span>
-    }
 
     const getFile = (file: FileI) => {
         let name = file.fileName;
@@ -77,7 +72,7 @@ export function GenericContentSidekickExample({ Id, Token }: { Id: string, Token
         <div className='bg-white w-full h-full border-b-5 border-b-black'>
             <div className='font-bold flex text-lg content-center justify-between mt-4 px-2 border-b-zinc-200 border-b-2'>
                 <span className='mb-2'>Урок: </span>
-                {getStatus(le.lesson.paused)}
+                <span className='mb-2'>{le.lesson.name}</span>
             </div>
 
             <div className='flex text-md content-center justify-between mt-4 px-2 border-b-zinc-200 border-b-2'>

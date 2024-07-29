@@ -19,12 +19,13 @@ function SampleFloatingWindowPlugin(
     const pluginApi: PluginApi = BbbPluginSdk.getPluginApi(uuid);
     const [isPaused, setIsPaused] = useState(false);
     const [time, setTime] = useState(0)
-    const [less, setLesson] = useState<CustomLesson>()
+    const [less, setLesson] = useState<CustomLesson | null>(null)
 
     const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
 
     const [Token, setToken] = useState("")
     const [Id, setID] = useState("")
+    const [continueOpen, setContinueOpen] = useState(false)
 
     const meetingDataReq = pluginApi.useMeeting();
     const userDataReq = pluginApi.useCurrentUser();
@@ -54,9 +55,20 @@ function SampleFloatingWindowPlugin(
     useEffect(() => {
         const inter = setInterval(async () => {
             const lesson = await request<CustomLesson>("bbb/lesson", Id, Token)
+            if (!lesson) {
+                pluginLogger.warn("No lesson")
+                return
+            }
             setLesson(lesson)
 
             //pluginLogger.info("New lesson", lesson)
+            if (lesson.lesson.time_ended !== 0) {
+                window.location.href = "https://www.test.fiveplas.ru/account"
+            }
+
+            if (lesson.lesson.paused_by_end) {
+                setContinueOpen(true)
+            }
 
             const realPause = lesson.lesson.paused || lesson.lesson.paused_by_end
             setIsPaused(realPause)
@@ -66,7 +78,6 @@ function SampleFloatingWindowPlugin(
             } else {
                 setTime((lesson.lesson.time_started + lesson.lesson.expected_time + lesson.lesson.time_erased) - (Math.floor(Date.now() / 1000)))
             }
-
         }, 1000)
 
         return () => { clearInterval(inter) }
@@ -82,10 +93,9 @@ function SampleFloatingWindowPlugin(
             const lesson = await request<CustomLesson>("bbb/end", Id, Token)
             setLesson(lesson)
 
-            window.location.href = "https://www.test.fiveplas.ru/profile"
+            window.location.href = "https://www.test.fiveplas.ru/account"
         })
         pluginApi.setNavBarItems(navBaritems);
-
     }, [isPaused, time, Id, Token])
 
 
@@ -95,18 +105,25 @@ function SampleFloatingWindowPlugin(
     }, [Id, Token])
 
     // FIXME: Починить sidebar
-    // DID: Таймер на паузе/в процессе 
-    // DID: Скачивание файлов
-    // DID: Продление
+    // DONE: Таймер на паузе/в процессе 
+    // DONE: Скачивание файлов
+    // DONE: Продление
+    // DONE: Снимаю/Ставлю на паузу таймер отприцателен
+    // DONE: Модалка продления моргает 
+    // DONE: Закончить в модалке 
+    // DONE: При завершении крашит у другово 
+    // DONE: При редиректе правильный адрес
     // TODO: Обработка ошибок в Continue
+    // DONE: Time started 0
 
 
     useEffect(() => {
-        if (less.lesson.paused_by_end) {
-            const popup = getContinuePopup(windowDimensions.width, windowDimensions.height, Id, Token)
+        if (continueOpen) {
+            const popup = getContinuePopup(windowDimensions.width, windowDimensions.height, Id, Token, () => { setContinueOpen(false) })
+
             pluginApi.setFloatingWindows([popup])
         }
-    }, [windowDimensions, Id, Token, less])
+    }, [windowDimensions, Id, Token, continueOpen])
 
     return null;
 }

@@ -5,7 +5,7 @@ export function request<TResponse>(
     config: RequestInit = { method: "GET" }
 ): Promise<TResponse> {
     if (id == "" || token == "") {
-        return
+        return null
     }
     // Inside, we call the `fetch` function with 
     // a URL and config given:

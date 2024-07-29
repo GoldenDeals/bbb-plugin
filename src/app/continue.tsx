@@ -4,7 +4,7 @@ import * as ReactDOM from 'react-dom/client';
 import { request } from './fetcher';
 import { CustomLesson } from './types';
 
-export function getContinuePopup(width: number, height: number, Id: string, Token: string) {
+export function getContinuePopup(width: number, height: number, Id: string, Token: string, closeCallback: () => void) {
     // 384
     const popup = new FloatingWindow({
         top: height / 2 - (height / 6),
@@ -19,9 +19,10 @@ export function getContinuePopup(width: number, height: number, Id: string, Toke
                 <React.StrictMode>
                     <Popup endCallback={async () => {
                         await request<CustomLesson>("bbb/end", Id, Token)
-                        window.location.href = "https://www.test.fiveplas.ru/profile"
+                        window.location.href = "https://www.test.fiveplas.ru/account"
                     }} continueCallback={async (time) => {
                         await fetch('https://api.test.fiveplas.ru/bbb/continue?id=' + Id + "&token=" + Token + '&time=' + time, { method: "GET" })
+                        closeCallback()
                     }} />
                 </React.StrictMode>,
             );
@@ -32,19 +33,24 @@ export function getContinuePopup(width: number, height: number, Id: string, Toke
 
 interface PopupProps {
     endCallback: () => void
-    continueCallback: (time: string) => void
+    continueCallback: (time: number) => void
 }
 
 export default function Popup({ endCallback, continueCallback }: PopupProps) {
     const [minutes, setMinutes] = React.useState(0)
     return <>
         <div className='w-[50vw] h-[45vh] min-h-48 min-w-80 max-w-sm max-h-52'>
+
             <div className='w-full flex content-center justify-center border-b-2 border-b-black' >
                 <span className='font-bold text-xl my-3'>
                     Время урока подошло к концу!
                 </span>
-            </div>
 
+                <span className='font-bold text-lg my-3'>
+                    Продлите урок на сайте
+                </span>
+            </div>
+            {/*
             <div className="py-2 px-3 m-4 bg-white border border-gray-200 rounded-lg" data-hs-input-number="">
                 <div className="w-full flex justify-between items-center gap-x-5">
                     <span className="block text-xs text-gray-500 dark:text-neutral-400">
@@ -72,13 +78,14 @@ export default function Popup({ endCallback, continueCallback }: PopupProps) {
             </div>
 
             <div className='px-3 flex content-evenly mt-5 justify-center h-fit'>
-                <button type="button" disabled={minutes == 0} className="py-3 mr-3 ml-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
+                <button type="button" onClick={() => { continueCallback(minutes) }} disabled={minutes == 0} className="py-3 mr-3 ml-2 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-green-600 text-white hover:bg-blue-700 focus:outline-none focus:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
                     Продолжить
                 </button>
-                <button type="button" className="py-3 px-4 mx-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-400 text-white hover:bg-red-600 focus:outline-none focus:bg-red-600 disabled:opacity-50 disabled:pointer-events-none">
+                <button type="button" onClick={endCallback}  className="py-3 px-4 mx-2 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-red-400 text-white hover:bg-red-600 focus:outline-none focus:bg-red-600 disabled:opacity-50 disabled:pointer-events-none">
                     Закончить
                 </button>
             </div>
+            */}
         </div >
     </>
 }

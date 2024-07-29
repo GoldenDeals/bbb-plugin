@@ -7,6 +7,8 @@ module.exports = {
         publicPath: '/static/',
         globalObject: 'this',
     },
+    mode: 'development',
+    devtool: 'source-map',
     devServer: {
         allowedHosts: 'all',
         port: 4701,
@@ -36,6 +38,9 @@ module.exports = {
                 exclude: /node_modules/,
             },
         ],
+    },
+    optimization: {
+        minimize: false
     },
     resolve: {
         extensions: ['.js', '.jsx', '.tsx', '.ts'],

@@ -24,7 +24,8 @@ export function getNavBarItems(time: number, isPaused: boolean, pauseCallback: (
     });
     EndButton.setItemId("dendBtn")
     const info = new NavBarInfo({
-        label: (isPaused ? 'На паузе        ' : 'Идет        ') + ([Math.floor(time / 60), time % 60].map(x => x < 10 ? '0' + x : x).join(":")),
+        label: (time < 0 ? "Ждем начала урока" :
+            (isPaused ? 'На паузе ' : 'Идет ') + ([Math.floor(time / 60), time % 60].map(x => x < 10 ? '0' + x : x).join(":"))),
         hasSeparator: true,
         position: NavBarItemPosition.CENTER,
     });
